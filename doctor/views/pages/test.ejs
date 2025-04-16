@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healing Minds Assessment</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #fef1e5;
+            font-family: Arial, sans-serif;
+            color: #333;
+            text-align: center;
+        }
+        .title {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #ff5e62;
+        }
+        .intro-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .intro-text {
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .start-button {
+            background-color: #ff5e62;
+            color: #ffffff;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .start-button:hover {
+            background-color: #ff9966;
+        }
+        .container {
+            display: none;
+            max-width: 45%;
+            margin: 50px auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .icon {
+            font-size: 40px;
+            color: #ff5e62;
+            margin-bottom: 10px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff5e62;
+            color: #ffffff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .options button:hover {
+            background-color: #ff9966;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Healing Minds Assessment</div>
+    <div class="intro-container" id="intro-container">
+        <p class="intro-text">
+          Welcome to our mental health assessment. For new users, completing this assessment is essential. It helps us better understand your needs and provide you with a list of doctors who are best suited to support you.
+        </p>
+        <button class="start-button" onclick="startTest()">Take the test</button>
+    </div>
+    
+    <div class="container" id="test-container">
+        <div class="icon" id="icon-container"></div>
+        <div id="question-container">
+            <p class="question" id="question-text"></p>
+            <div class="options" id="options-container"></div>
+        </div>
+    </div>
+    
+    <script>
+        const questions = [
+            // insomnia
+            { text: "Do you often have trouble falling asleep at night?", options: ["Yes", "No"], icon: "fas fa-bed" },
+            { text: "Do you wake up frequently during the night and struggle to fall back asleep?", options: ["Yes", "No"], icon: "fas fa-moon" },
+            { text: "Do you feel excessively tired or unrefreshed after a full night's sleep?", options: ["Yes", "No"], icon: "fas fa-coffee" },
+            { text: "Do you rely on naps or caffeine to get through the day due to poor sleep?", options: ["Yes", "No"], icon: "fas fa-mug-hot" },
+            { text: "How many hours of sleep do you typically get per night?", options: ["Less than 4 hours", "4-5 hours", "6-7 hours", "8+ hours"], icon: "fas fa-clock" },
+            // stress
+            { text: "Do you frequently feel overwhelmed by daily responsibilities?", options: ["Yes", "No"], icon: "fas fa-exclamation-circle" },
+            { text: "Do you often experience physical symptoms like headaches or muscle tension due to stress?", options: ["Yes", "No"], icon: "fas fa-head-side-virus" },
+            { text: "Do you have trouble relaxing, even during free time?", options: ["Yes", "No"], icon: "fas fa-spa" },
+            { text: "Do you find it difficult to control your worries or racing thoughts?", options: ["Yes", "No"], icon: "fas fa-brain" },
+            { text: "How often do you feel that stress is affecting your overall health?", options: ["Never", "Rarely", "Sometimes", "Often"], icon: "fas fa-heartbeat" },
+            // anxiety
+            { text: "Do you frequently feel nervous, anxious, or on edge?", options: ["Yes", "No"], icon: "fas fa-exclamation-triangle" },
+            { text: "Do you avoid certain situations because they make you feel too anxious?", options: ["Yes", "No"], icon: "fas fa-user-secret" },
+            { text: "Do you experience sudden episodes of intense fear or panic?", options: ["Yes", "No"], icon: "fas fa-bolt" },
+            { text: "Do you have trouble sleeping because of worrying thoughts?", options: ["Yes", "No"], icon: "fas fa-bed" },
+            { text: "How often do you feel that your anxiety is interfering with your daily life?", options: ["Never", "Rarely", "Sometimes", "Often"], icon: "fas fa-wave-square" },
+            // emotional damage
+            { text: "Do you often feel emotionally exhausted or drained?", options: ["Yes", "No"], icon: "fas fa-battery-empty" },
+            { text: "Do you feel your mood fluctuates dramatically throughout the day?", options: ["Yes", "No"], icon: "fas fa-random" },
+            { text: "Do you often struggle to recognize or understand your emotions?", options: ["Yes", "No"], icon: "fas fa-question-circle" },
+            { text: "Do you frequently feel more irritable than usual?", options: ["Yes", "No"], icon: "fas fa-angry" },
+            { text: "How would you describe your mood most of the time?", options: ["Very positive", "Slightly positive", "Slightly negative", "Very negative"], icon: "fas fa-smile" }
+        ];
+
+        const answers = [];
+
+        let currentQuestionIndex = 0;
+
+        function startTest() {
+            document.getElementById("intro-container").style.display = "none";
+            document.getElementById("test-container").style.display = "block";
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                fetch('/test',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({answers:answers}),
+                })
+                .then(response => response.json())
+                window.location.href = "/book";
+                return answers;
+            }
+            const questionData = questions[currentQuestionIndex];
+            document.getElementById("icon-container").innerHTML = `<i class="${questionData.icon}"></i>`;
+            document.getElementById("question-text").textContent = questionData.text;
+            document.getElementById("options-container").innerHTML = "";
+            let size = questionData.options.length;
+            questionData.options.forEach(option => {
+                let button = document.createElement("button");
+                button.textContent = option;
+                // console.log(size);
+                button.onclick = (()=> {
+                    // console.log(questionData.options.indexOf(option));
+                    if (questionData.options.indexOf(option)+1 <= size/2){
+                        answers.push('yes');
+                    }else{
+                        answers.push('no');
+                    }
+                    currentQuestionIndex++;
+                    loadQuestion();
+                });
+                document.getElementById("options-container").appendChild(button);
+            });
+        }
+    </script>
+</body>
+</html>

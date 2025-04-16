@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f7fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #3c8dbc;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    nav {
+      background-color: #5faee3;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav a {
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+      display: block;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      background-color: #3c8dbc;
+    }
+
+    .container {
+      margin: 20px;
+    }
+
+    .profile-info {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      width: 500px;
+      margin: 30px auto;
+    }
+
+    .profile-info h2 {
+      text-align: center;
+      color: #3c8dbc;
+      margin-bottom: 25px;
+    }
+
+    .profile-info div {
+      margin-bottom: 20px;
+    }
+
+    .profile-info label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .profile-info p {
+      margin: 5px 0;
+      color: #555;
+    }
+
+    .update-button {
+      background-color: #3c8dbc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .update-button:hover {
+      background-color: #5faee3;
+    }
+
+    .update-box {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .update-box input,
+    .update-box select {
+      padding: 8px;
+      width: 100%;
+      margin-bottom: 10px;
+      border: 1px solid #cbddee;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .update-box button {
+      background-color: #3c8dbc;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .update-box button:hover {
+      background-color: #5faee3;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Doctor Profile</h1>
+</header>
+
+<nav>
+  <a href="/doctor/">Home</a>
+  <a href="/schedule">Schedule</a>
+</nav>
+
+<div class="container">
+  <div class="profile-info">
+    <h2>Welcome, Dr. John Doe</h2>
+
+    <!-- Full Name -->
+    <div>
+      <label for="full_name">Full Name:</label>
+      <p id="full_name">Dr. John Doe</p>
+      <button class="update-button" onclick="showUpdateBox('full_name')">Update</button>
+      <div id="update_full_name" class="update-box">
+        <input type="text" id="new_full_name" value="Dr. John Doe" />
+        <button onclick="updateField('full_name')">Save</button>
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label for="email">Email:</label>
+      <p id="email">john.doe@example.com</p>
+      <button class="update-button" onclick="showUpdateBox('email')">Update</button>
+      <div id="update_email" class="update-box">
+        <input type="email" id="new_email" value="john.doe@example.com" />
+        <button onclick="updateField('email')">Save</button>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div>
+      <label for="password">Password:</label>
+      <p id="password">********</p>
+      <button class="update-button" onclick="showUpdateBox('password')">Update</button>
+      <div id="update_password" class="update-box">
+        <input type="password" id="new_password" value="password123" />
+        <button onclick="updateField('password')">Save</button>
+      </div>
+    </div>
+
+    <!-- Telephone -->
+    <div>
+      <label for="telephone">Telephone:</label>
+      <p id="telephone">+1 234 567 890</p>
+      <button class="update-button" onclick="showUpdateBox('telephone')">Update</button>
+      <div id="update_telephone" class="update-box">
+        <input type="tel" id="new_telephone" value="+1 234 567 890" />
+        <button onclick="updateField('telephone')">Save</button>
+      </div>
+    </div>
+
+    <!-- Office Location -->
+    <div>
+      <label for="location">Office Location:</label>
+      <p id="location">123 Main St, Cityville</p>
+      <button class="update-button" onclick="showUpdateBox('location')">Update</button>
+      <div id="update_location" class="update-box">
+        <input type="text" id="new_location" value="123 Main St, Cityville" />
+        <button onclick="updateField('location')">Save</button>
+      </div>
+    </div>
+
+    <!-- Specialty -->
+    <div>
+      <label for="speciality">Specialty:</label>
+      <p id="speciality">Stress and Anxiety</p>
+      <button class="update-button" onclick="showUpdateBox('speciality')">Update</button>
+      <div id="update_speciality" class="update-box">
+        <input type="text" id="new_speciality" value="Stress and Anxiety" />
+        <button onclick="updateField('speciality')">Save</button>
+      </div>
+    </div>
+
+    <!-- Consultation Type -->
+    <div>
+      <label for="type">Consultation Type:</label>
+      <p id="type">Online</p>
+      <button class="update-button" onclick="showUpdateBox('type')">Update</button>
+      <div id="update_type" class="update-box">
+        <select id="new_type">
+          <option value="online" selected>Online</option>
+          <option value="office">In-office</option>
+          <option value="both">Both</option>
+        </select>
+        <button onclick="updateField('type')">Save</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showUpdateBox(field) {
+    document.getElementById('update_' + field).style.display = 'block';
+  }
+
+  function updateField(field) {
+    const newValue = document.getElementById('new_' + field).value;
+    document.getElementById(field).innerText = newValue;
+    document.getElementById('update_' + field).style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
