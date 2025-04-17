@@ -3,6 +3,7 @@ const bodyParser =require('body-parser');
 const app = express();
 const http = require('http');
 const mysql = require('mysql2');
+const { default: mongoose } = require('mongoose');
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine','ejs');
 app.use(express.json());
@@ -16,6 +17,9 @@ const pool = mysql.createPool({
     password: '',
     database: 'doctor',
 });
+let Schedule = require('./models/schedule');
+let password = 'athinalatifi51';
+mongoose.connect('mongodb+srv://'+password+':'+password+'@cluster0.1rslh5n.mongodb.net/'+ 'doctor')
 
 const db = pool.promise();
 
@@ -43,7 +47,8 @@ var answers;
 app.get('/book', async (req, res) => {
     //
     let docs = [];
-    console.log("Test: "+answers)
+    const schedules = await Schedule.find();
+    // console.log("Test: "+answers)
     group1 = answers.slice(0,5)
     group2 = answers.slice(5,10)
     group3 = answers.slice(10,15)
@@ -109,11 +114,12 @@ app.get('/book', async (req, res) => {
             console.error(error)
         }
     }
-    console.log('Group1: '+ group1Counter)
-    console.log('Group2: '+ group2Counter)
-    console.log('Group3: '+ group3Counter)
-    console.log('Group4: '+ group4Counter)
-    res.render('./pages/book', {'doctors':docs,});    
+    console.log(docs);
+    // console.log('Group1: '+ group1Counter)
+    // console.log('Group2: '+ group2Counter)
+    // console.log('Group3: '+ group3Counter)
+    // console.log('Group4: '+ group4Counter)
+    res.render('./pages/book', {'doctors':docs, 'schedules':schedules});    
 });
 
 app.get('/book_doctor/', (req, res) =>{
@@ -136,7 +142,9 @@ app.get('/profile', (req, res) => {
     res.render('./pages/profile'); 
 });
 
-app.get('/doctor', (req, res) => {
+app.get('/doctor', async (req, res) => {
+    const data = await Schedule.find();
+    console.log(data)
     res.render('./pages/doctor'); 
 });
 

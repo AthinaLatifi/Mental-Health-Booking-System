@@ -124,8 +124,9 @@
     <form action="/book_doctor" method="get">
       <label for="appointmentDoctor">Select a Doctor:</label>
       <select name="appointmentDoctor" id="appointmentDoctor">
+          <option value="null" disabled selected></option>
         <% for(let i = 0; i < doctors.length; i++) { %>
-          <option value="<%= doctors[i]['full_name'] %>"><%= doctors[i]['full_name'] %> <%= doctors[i]['speciality'] %></option>
+          <option value="<%= doctors[i]['id'] %>"><%= doctors[i]['full_name'] %> <%= doctors[i]['speciality'] %></option>
         <% } %>
       </select>
 
@@ -146,8 +147,24 @@
   </div>
 
   <p id="confirmationMessage"></p>
-
+  <input hidden value="<%= schedules %>" id="schedules">
 <script>
+    const selectElement = document.getElementById('appointmentDoctor');
+    const temp = document.getElementById('schedules').value;
+    selectElement.addEventListener('change', () => {
+      for (let i = 0; i < temp.length; i++){
+        if (selectElement.value == temp['doctor']){
+          // check if the date is in absence table
+            // if it is display empty message
+            // else
+              // get selected day 
+              // get day's doctor's schedule 
+              // get all books for that date
+              // timeSlots will be the schedule without the books
+        }
+      }
+    });
+
     let selectedTime = null;
     const timeSlots = [
       "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
