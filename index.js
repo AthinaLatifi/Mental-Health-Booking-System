@@ -109,9 +109,9 @@ app.get('/book', async (req, res) => {
         let query = 'SELECT * FROM doc WHERE speciality="Emotional Damage"; '
         try{
             const [rows] = await db.query(query);
-            docs = docs.concat(rows)
+            docs = docs.concat(rows);
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
     }
     console.log(docs);
@@ -119,7 +119,16 @@ app.get('/book', async (req, res) => {
     // console.log('Group2: '+ group2Counter)
     // console.log('Group3: '+ group3Counter)
     // console.log('Group4: '+ group4Counter)
-    res.render('./pages/book', {'doctors':docs, 'schedules':schedules});    
+    absence = []
+    try{
+        query = 'SELECT * FROM absence;'
+        const [rows] = await db.query(query);
+        absence = absence.concat(rows);
+    } catch (error){
+        console.error(error);
+    }
+    console.log(absence);
+    res.render('./pages/book', {'doctors':docs, 'schedules':schedules, absence});    
 });
 
 app.get('/book_doctor/', (req, res) =>{

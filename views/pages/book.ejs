@@ -148,12 +148,20 @@
 
   <p id="confirmationMessage"></p>
   <input hidden value="<%= schedules %>" id="schedules">
+  <input hidden value="<%= absence %>" id="absence">
+  <p><%= schedules %></p>
+  <p><%= absence %></p>
+  <p><%= absence[0] %></p>
+  <p><%= absence[0]['id'] %></p>
+
 <script>
     const selectElement = document.getElementById('appointmentDoctor');
-    const temp = document.getElementById('schedules').value;
+    const doctors = document.getElementById('schedules').value;
+    const absence = document.getElementById('absence');
     selectElement.addEventListener('change', () => {
-      for (let i = 0; i < temp.length; i++){
-        if (selectElement.value == temp['doctor']){
+      let currentDate = document.getElementById('appointmentDate').value.toString();
+      for (let i = 0; i < doctors.length; i++){
+        if (selectElement.value == doctors['doctor']){
           // check if the date is in absence table
             // if it is display empty message
             // else
