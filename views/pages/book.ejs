@@ -135,9 +135,8 @@
              min="<%= new Date().toISOString().split('T')[0] %>">
 
       <label>Select a Time Slot:</label>
-      <div class="time-slots" id="timeSlots">
-        <!-- Time slots populated by JavaScript -->
-      </div>
+      <div class="time-slots" id="timeSlots"></div>
+         <div id="errorMessage"></div>
 
       <!-- Hidden input to capture selected time -->
       <input type="hidden" name="selectedTime" id="selectedTimeInput" required>
@@ -148,35 +147,76 @@
 
   <p id="confirmationMessage"></p>
   <input hidden value="<%= schedules %>" id="schedules">
-  <input hidden value="<%= absence %>" id="absence">
-  <p><%= schedules %></p>
-  <p><%= absence %></p>
-  <p><%= absence[0] %></p>
-  <p><%= absence[0]['id'] %></p>
+  
 
 <script>
     const selectElement = document.getElementById('appointmentDoctor');
+    const dateElement = document.getElementById('appointmentDate');
     const doctors = document.getElementById('schedules').value;
-    const absence = document.getElementById('absence');
+    const absence = <%- JSON.stringify(absence) %>;
+    let error = document.getElementById('errorMessage');
+    let timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
     selectElement.addEventListener('change', () => {
       let currentDate = document.getElementById('appointmentDate').value.toString();
-      for (let i = 0; i < doctors.length; i++){
-        if (selectElement.value == doctors['doctor']){
-          // check if the date is in absence table
-            // if it is display empty message
-            // else
-              // get selected day 
-              // get day's doctor's schedule 
-              // get all books for that date
-              // timeSlots will be the schedule without the books
+      currentDate += 'T22:00:00.000Z';
+      let currentDoctor = document.getElementById('appointmentDoctor').value; // string 
+      
+      doc_absence = []
+      for (let i=0; i<absence.length; i++){
+        if (absence[i]['doc_id'] == currentDoctor){
+          doc_absence.push(absence[i]);
         }
       }
+      for (let i=0; i<doc_absence.length; i++){
+        if (currentDate >= doc_absence[i]['from_date'] && currentDate <= doc_absence[i]['to_date']){
+          timeSlots.length = 0;
+          error.innerText = 'The doctor is unavailable or the times slots are full';
+          break;
+        } else {
+          error.innerText = '';
+          timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+        }
+      }
+      // for (let i = 0; i < doctors.length; i++){
+      //   if (selectElement.value == doctors['doctor']){
+      //     // check if the date is in absence table
+      //       // if it is display empty message
+      //       // else
+      //         // get selected day 
+      //         // get day's doctor's schedule 
+      //         // get all books for that date
+      //         // timeSlots will be the schedule without the books
+      //   }
+      // }
+      console.log("select element :"+ timeSlots + "Type: "+ typeof(timeSlots));
     });
 
+    dateElement.addEventListener('change', () => {
+      let currentDate = document.getElementById('appointmentDate').value.toString();
+      currentDate += 'T22:00:00.000Z';
+      let currentDoctor = document.getElementById('appointmentDoctor').value; // string 
+      
+      doc_absence = []
+      for (let i=0; i<absence.length; i++){
+        if (absence[i]['doc_id'] == currentDoctor){
+          doc_absence.push(absence[i]);
+        }
+      }
+      for (let i=0; i<doc_absence.length; i++){
+        if (currentDate >= doc_absence[i]['from_date'] && currentDate <= doc_absence[i]['to_date']){
+          timeSlots.length = 0;
+          error.innerText = 'The doctor is unavailable or the times slots are full';
+          break;
+        } else {
+          error.innerText = '';
+          timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+        }
+      }
+      console.log("Date element :"+ timeSlots + "Type: "+ timeSlots[0]);
+    });
+    
     let selectedTime = null;
-    const timeSlots = [
-
-    ];
+    
 
     function renderTimeSlots() {
       const container = document.getElementById("timeSlots");
