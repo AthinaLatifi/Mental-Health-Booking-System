@@ -127,8 +127,16 @@ app.get('/book', async (req, res) => {
     } catch (error){
         console.error(error);
     }
-    console.log(absence);
-    res.render('./pages/book', {'doctors':docs, 'schedules':schedules, absence});    
+    books = []
+    try{
+        query = 'SELECT * FROM booking;'
+        const [rows] = await db.query(query);
+        books = books.concat(rows);        
+    } catch (error){
+        console.error(error);
+    }
+    console.log(books);
+    res.render('./pages/book', {'doctors':docs, 'schedules':schedules, absence, books});    
 });
 
 app.get('/book_doctor/', (req, res) =>{
