@@ -135,8 +135,9 @@ app.get('/book', async (req, res) => {
     } catch (error){
         console.error(error);
     }
-    console.log(books);
-    res.render('./pages/book', {'doctors':docs, 'schedules':schedules, absence, books});    
+    console.log(schedules);
+    console.log(schedules[0]);
+    res.render('./pages/book', {'doctors':docs, schedules, absence, books});    
 });
 
 app.get('/book_doctor/', (req, res) =>{

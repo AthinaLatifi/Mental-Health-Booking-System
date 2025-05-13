@@ -132,7 +132,8 @@
 
       <label for="appointmentDate">Select a Date:</label>
       <input type="date" id="appointmentDate" name="appointmentDate" required
-             min="<%= new Date(Date.now() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0]%>">
+             min="<%= new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0]%>"
+             value="<%= new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().split('T')[0]%>">
 
       <label>Select a Time Slot:</label>
       <div class="time-slots" id="timeSlots"></div>
@@ -146,25 +147,24 @@
   </div>
 
   <p id="confirmationMessage"></p>
-  <input hidden value="<%= schedules %>" id="schedules">
-
 
 
 <script>
     const selectElement = document.getElementById('appointmentDoctor');
     const dateElement = document.getElementById('appointmentDate');
-    const doctors = document.getElementById('schedules').value;
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const absence = <%- JSON.stringify(absence) %>;
     const books = <%- JSON.stringify(books) %>; 
-    console.log(books);
-    console.log(absence);
+    const schedules = <%- JSON.stringify(schedules) %>;
+    console.log(schedules[0]);
+    console.log(schedules[0]['days']['Monday']);
+
     let error = document.getElementById('errorMessage');
-    let timeSlots =[]; //['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+    let timeSlots =[];
     selectElement.addEventListener('change', () => {
       let currentDate = document.getElementById('appointmentDate').value.toString();
-      currentDate += 'T22:00:00.000Z';
-      let currentDoctor = document.getElementById('appointmentDoctor').value; // string 
-      
+      let currentDoctor = document.getElementById('appointmentDoctor').value; 
+      let weekDay = days[new Date(currentDate).getDay()];
       doc_absence = []
       for (let i=0; i<absence.length; i++){
         if (absence[i]['doc_id'] == currentDoctor){
@@ -178,42 +178,48 @@
           break;
         } else {
           error.innerText = '';
-          timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
-          // doc_books = [];
-          // for (let i=0;i<books.length; i++){
-          //   if (books[i]['doc_id']==currentDoctor && books[i]['on_date'] == currentDate){
-          //     timeSlots.splice(timeSlots.indexOf('on_time').slice(0,5),1);
-          //   }
-          // }
-          // console.log(books[i]['on_date'].split('T')[0]);
-          // console.log(currentDate);
-          
-          // get all the books for the current date 
-          // if time in timeslots 
-          //  timeslots.splice(timeslots.indexOf(time),1);
-          //  
+          timeSlots = [];
+          for (let ii=0;ii<schedules.length;ii++){
+            if (currentDoctor==schedules[ii]['doctor']){
+              schedule = schedules[ii];
+              break;
+            }
+          }
+          startTime = schedule['days'][weekDay][0];
+          endTime = schedule['days'][weekDay][1];
+          if (startTime==endTime){
+            console.log('equals');
+            timeSlots = [];
+            error.innerText = 'The doctor doesn\'t accept pationts that day';
+            break;
+          } else {
+            console.log('not equals');
+            timeSlots.push(startTime);
+            item = 10;
+            while (item+':00'!=endTime){
+              timeSlots.push(item.toString()+":00");
+              item++;
+            }
+            timeSlots.push(endTime);
+          }
+          console.log(timeSlots);
+          doc_books = [];
+          for (let i=0;i<books.length; i++){
+            if (books[i]['doc_id']==currentDoctor && books[i]['on_date'] == currentDate){
+              timeSlots.splice(timeSlots.indexOf(books[i]['on_time']),1);
+            }
+          }
         }
       }
-      // for (let i = 0; i < doctors.length; i++){
-      //   if (selectElement.value == doctors['doctor']){
-      //     // check if the date is in absence table
-      //       // if it is display empty message
-      //       // else
-      //         // get selected day 
-      //         // get day's doctor's schedule 
-      //         // get all books for that date
-      //         // timeSlots will be the schedule without the books
-      //   }
-      // }
       console.log("select element :"+ timeSlots + "Type: "+ typeof(timeSlots));
       renderTimeSlots();
+      timeSlots = [];
     });
 
     dateElement.addEventListener('change', () => {
       let currentDate = document.getElementById('appointmentDate').value.toString();
-      currentDate += 'T22:00:00.000Z';
-      let currentDoctor = document.getElementById('appointmentDoctor').value; // string 
-      
+      let currentDoctor = document.getElementById('appointmentDoctor').value; 
+      let weekDay = days[new Date(currentDate).getDay()];
       doc_absence = []
       for (let i=0; i<absence.length; i++){
         if (absence[i]['doc_id'] == currentDoctor){
@@ -227,25 +233,42 @@
           break;
         } else {
           error.innerText = '';
-          timeSlots = ['09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
-          // doc_books = [];
-          // for (let i=0;i<books.length; i++){
-          //   if (books[i]['doc_id']==currentDoctor && books[i]['on_date'] == currentDate){
-          //     timeSlots.splice(timeSlots.indexOf('on_time').slice(0,5),1);
-          //   }
-          // }
-          // console.log(books[i]['on_date'].split('T')[0]);
-          // console.log(currentDate);
-          // get all the books
-          // get all the current doctor's books
-          // get all the books for the current date 
-          // if time in timeslots 
-          //  timeslots.splice(timeslots.indexOf(time),1);
-          //  
+          timeSlots = [];
+          for (let ii=0;ii<schedules.length;ii++){
+            if (currentDoctor==schedules[ii]['doctor']){
+              schedule = schedules[ii];
+              break;
+            }
+          }
+          startTime = schedule['days'][weekDay][0];
+          endTime = schedule['days'][weekDay][1];
+          if (startTime==endTime){
+            console.log('equals');
+            timeSlots = [];
+            error.innerText = 'The doctor doesn\'t accept pationts that day';
+            break;
+          } else {
+            console.log('not equals');
+            timeSlots.push(startTime);
+            item = 10;
+            while (item+':00'!=endTime){
+              timeSlots.push(item.toString()+":00");
+              item++;
+            }
+            timeSlots.push(endTime);
+          }
+          console.log(timeSlots);
+          doc_books = [];
+          for (let i=0;i<books.length; i++){
+            if (books[i]['doc_id']==currentDoctor && books[i]['on_date'] == currentDate){
+              timeSlots.splice(timeSlots.indexOf(books[i]['on_time']),1);
+            }
+          }
         }
       }
       console.log("Date element :"+ timeSlots + "Type: "+ timeSlots[0]);
       renderTimeSlots();
+      timeSlots = [];
     });
     
     let selectedTime = null;
