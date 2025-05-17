@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Apr 17, 2025 at 02:24 PM
+-- Generation Time: May 13, 2025 at 10:56 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.0.26
 
@@ -31,29 +31,21 @@ DROP TABLE IF EXISTS `absence`;
 CREATE TABLE IF NOT EXISTS `absence` (
   `id` int NOT NULL AUTO_INCREMENT,
   `doc_id` int NOT NULL,
-  `from_date` date NOT NULL,
-  `to_date` date NOT NULL,
+  `from_date` varchar(10) NOT NULL,
+  `to_date` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `doc_id` (`doc_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Table structure for table `available`
+-- Dumping data for table `absence`
 --
 
-DROP TABLE IF EXISTS `available`;
-CREATE TABLE IF NOT EXISTS `available` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `doc_id` int NOT NULL,
-  `date_from` date NOT NULL,
-  `date_to` date NOT NULL,
-  `time_from` time NOT NULL,
-  `time_to` time NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `doc_id` (`doc_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+INSERT INTO `absence` (`id`, `doc_id`, `from_date`, `to_date`) VALUES
+(1, 13, '2025-04-30', '2025-05-03'),
+(2, 13, '2025-05-04', '2025-05-10'),
+(3, 13, '2025-05-11', '2025-05-17'),
+(4, 13, '2025-05-11', '2025-05-17');
 
 -- --------------------------------------------------------
 
@@ -66,12 +58,23 @@ CREATE TABLE IF NOT EXISTS `booking` (
   `id` int NOT NULL AUTO_INCREMENT,
   `doc_id` int NOT NULL,
   `patient_id` int NOT NULL,
-  `on_date` date NOT NULL,
-  `on_time` time NOT NULL,
+  `on_date` varchar(10) NOT NULL,
+  `on_time` varchar(5) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `doc_id` (`doc_id`,`patient_id`),
   KEY `patient_id` (`patient_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`id`, `doc_id`, `patient_id`, `on_date`, `on_time`) VALUES
+(1, 13, 1, '2025-05-20', '09:00'),
+(2, 13, 2, '2025-05-20', '10:00'),
+(3, 13, 2, '2025-05-31', '10:00'),
+(5, 13, 1, '2025-05-21', '10:00'),
+(7, 13, 2, '2025-05-21', '10:00');
 
 -- --------------------------------------------------------
 
@@ -140,12 +143,6 @@ INSERT INTO `patient` (`id`, `full_name`, `email`, `password`, `telephone`, `tes
 --
 ALTER TABLE `absence`
   ADD CONSTRAINT `absence_ibfk_1` FOREIGN KEY (`doc_id`) REFERENCES `doc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `available`
---
-ALTER TABLE `available`
-  ADD CONSTRAINT `available_ibfk_1` FOREIGN KEY (`doc_id`) REFERENCES `doc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `booking`
