@@ -156,8 +156,6 @@
     const absence = <%- JSON.stringify(absence) %>;
     const books = <%- JSON.stringify(books) %>; 
     const schedules = <%- JSON.stringify(schedules) %>;
-    console.log(schedules[0]);
-    console.log(schedules[0]['days']['Monday']);
 
     let error = document.getElementById('errorMessage');
     let timeSlots =[];
@@ -190,7 +188,7 @@
           if (startTime==endTime){
             console.log('equals');
             timeSlots = [];
-            error.innerText = 'The doctor doesn\'t accept pationts that day';
+            error.innerText = 'The doctor doesn\'t accept patients that day';
             break;
           } else {
             console.log('not equals');

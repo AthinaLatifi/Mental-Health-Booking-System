@@ -108,7 +108,13 @@
   <div class="container">
     <div class="box">
       <h3>Your Appointments</h3>
+      <% if (appointments){%> 
+        <% for (let i = 0; i<appointments.length; i++){ %>
+          <p>Appointment with doctor <%=appointments[i].doctor.full_name%> <%=appointments[i].on_date%></p>
+        <% } %>  
+      <% }else {%>
       <p>No upcoming appointments.</p>
+      <% } %>
     </div>
 
     <div class="box">
