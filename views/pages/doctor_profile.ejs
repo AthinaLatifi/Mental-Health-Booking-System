@@ -124,19 +124,20 @@
 <nav>
   <a href="/doctor/">Home</a>
   <a href="/schedule">Schedule</a>
+  <a href="/login">Logout</a>
 </nav>
 
 <div class="container">
   <div class="profile-info">
-    <h2>Welcome, Dr. John Doe</h2>
+    <h2>Welcome, <%= doctor.full_name %></h2>
 
     <!-- Full Name -->
     <div>
       <label for="full_name">Full Name:</label>
-      <p id="full_name">Dr. John Doe</p>
+      <p id="full_name"><%= doctor.full_name %></p>
       <button class="update-button" onclick="showUpdateBox('full_name')">Update</button>
       <div id="update_full_name" class="update-box">
-        <input type="text" id="new_full_name" value="Dr. John Doe" />
+        <input type="text" id="new_full_name" value="<%= doctor.full_name %>" />
         <button onclick="updateField('full_name')">Save</button>
       </div>
     </div>
@@ -144,15 +145,15 @@
     <!-- Email -->
     <div>
       <label for="email">Email:</label>
-      <p id="email">john.doe@example.com</p>
+      <p id="email"><%= doctor.email %></p>
       <button class="update-button" onclick="showUpdateBox('email')">Update</button>
       <div id="update_email" class="update-box">
-        <input type="email" id="new_email" value="john.doe@example.com" />
+        <input type="email" id="new_email" value="<%= doctor.email %>" />
         <button onclick="updateField('email')">Save</button>
       </div>
     </div>
 
-    <!-- Password -->
+    <!-- Password (masked) -->
     <div>
       <label for="password">Password:</label>
       <p id="password">********</p>
@@ -166,21 +167,21 @@
     <!-- Telephone -->
     <div>
       <label for="telephone">Telephone:</label>
-      <p id="telephone">+1 234 567 890</p>
+      <p id="telephone"><%= doctor.telephone %></p>
       <button class="update-button" onclick="showUpdateBox('telephone')">Update</button>
       <div id="update_telephone" class="update-box">
-        <input type="tel" id="new_telephone" value="+1 234 567 890" />
+        <input type="tel" id="new_telephone" value="<%= doctor.telephone %>" />
         <button onclick="updateField('telephone')">Save</button>
       </div>
     </div>
 
-    <!-- Office Location -->
+    <!-- Location -->
     <div>
       <label for="location">Office Location:</label>
-      <p id="location">123 Main St, Cityville</p>
+      <p id="location"><%= doctor.location %></p>
       <button class="update-button" onclick="showUpdateBox('location')">Update</button>
       <div id="update_location" class="update-box">
-        <input type="text" id="new_location" value="123 Main St, Cityville" />
+        <input type="text" id="new_location" value="<%= doctor.location %>" />
         <button onclick="updateField('location')">Save</button>
       </div>
     </div>
@@ -188,43 +189,41 @@
     <!-- Specialty -->
     <div>
       <label for="speciality">Specialty:</label>
-      <p id="speciality">Stress and Anxiety</p>
+      <p id="speciality"><%= doctor.speciality %></p>
       <button class="update-button" onclick="showUpdateBox('speciality')">Update</button>
       <div id="update_speciality" class="update-box">
-        <input type="text" id="new_speciality" value="Stress and Anxiety" />
+        <input type="text" id="new_speciality" value="<%= doctor.speciality %>" />
         <button onclick="updateField('speciality')">Save</button>
       </div>
     </div>
-
-    <!-- Consultation Type -->
-    <div>
-      <label for="type">Consultation Type:</label>
-      <p id="type">Online</p>
-      <button class="update-button" onclick="showUpdateBox('type')">Update</button>
-      <div id="update_type" class="update-box">
-        <select id="new_type">
-          <option value="online" selected>Online</option>
-          <option value="office">In-office</option>
-          <option value="both">Both</option>
-        </select>
-        <button onclick="updateField('type')">Save</button>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<script>
-  function showUpdateBox(field) {
-    document.getElementById('update_' + field).style.display = 'block';
-  }
+  <script>
+    function showUpdateBox(field) {
+      // Hides all other boxes before showing the selected one
+      document.querySelectorAll('.update-box').forEach(box => box.style.display = 'none');
+      document.getElementById('update_' + field).style.display = 'block';
+    }
 
-  function updateField(field) {
-    const newValue = document.getElementById('new_' + field).value;
-    document.getElementById(field).innerText = newValue;
-    document.getElementById('update_' + field).style.display = 'none';
-  }
-</script>
+    async function updateField(field) {
+      const newValue = document.getElementById('new_' + field).value;
 
+      const res = await fetch('/update_doctor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ field, value: newValue })
+      });
+
+      if (res.ok) {
+        document.getElementById(field).innerText = newValue;
+        document.getElementById('update_' + field).style.display = 'none';
+      } else {
+        alert('Failed to update. Please try again.');
+      }
+    }
+  </script>
 </body>
 </html>

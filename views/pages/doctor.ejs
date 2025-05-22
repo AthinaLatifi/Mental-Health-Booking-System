@@ -105,40 +105,35 @@
 <nav>
   <a href="/schedule">Schedule</a>
   <a href="/doctor_profile">Profile</a>
+  <a href="/login">Logout</a>
 </nav>
 
 <div class="container">
   <div class="profile-card">
     <h2>Today's Schedule</h2>
     <table class="schedule-table">
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Patient Name</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>09:00 AM</td>
-          <td>Alice</td>
-          <td class="status-confirmed">Confirmed</td>
-        </tr>
-        <tr>
-          <td>10:00 AM</td>
-          <td>Bob</td>
-          <td class="status-pending">Pending</td>
-        </tr>
-        <tr>
-          <td>11:00 AM</td>
-          <td>Charlie</td>
-          <td class="status-cancelled">Cancelled</td>
-        </tr>
-        <!-- More rows can be added here -->
-      </tbody>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Patient Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (appointments && appointments.length > 0) { %>
+            <% appointments.forEach(app => { %>
+              <tr>
+                <td><%= app.on_time %></td>
+                <td><%= app.patient_name %></td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="2">No appointments scheduled for today.</td>
+            </tr>
+          <% } %>
+        </tbody>
     </table>
   </div>
 </div>
-
 </body>
 </html>

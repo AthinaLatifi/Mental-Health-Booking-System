@@ -108,6 +108,25 @@
   <div class="container">
     <div class="box">
       <h3>Your Appointments</h3>
+      <% if (appointments && appointments.length > 0) { %> 
+        <% for (let i = 0; i < appointments.length; i++) { 
+            const a = appointments[i]; 
+        %>
+          <p>
+            Appointment with <%= a.doctor.full_name %> <br>
+            📅 Date: <%= a.on_date %> <br>
+            🕒 Time: <%= a.on_time %> <br>
+            📍 Location: <%= a.doctor.location %>
+          </p>
+          <hr>
+        <% } %>  
+      <% } else { %>
+        <p>No upcoming appointments.</p>
+      <% } %>
+    </div>
+
+    <!-- <div class="box">
+      <h3>Your Appointments</h3>
       <% if (appointments){%> 
         <% for (let i = 0; i<appointments.length; i++){ %>
           <p>Appointment with doctor <%=appointments[i].doctor.full_name%> <%=appointments[i].on_date%></p>
@@ -115,7 +134,7 @@
       <% }else {%>
       <p>No upcoming appointments.</p>
       <% } %>
-    </div>
+    </div> -->
 
     <div class="box">
       <h3>Retake Test </h3>

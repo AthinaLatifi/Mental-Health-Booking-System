@@ -126,7 +126,8 @@ app.get('/home', async (req, res) => {
           doctor: doctor ? {
             id: doctor.id,
             full_name: doctor.full_name,
-            email: doctor.email
+            email: doctor.email,
+            location: doctor.location
           } : null
         };
       });
@@ -271,27 +272,145 @@ app.post('/test', (req,res) => {
     res.render('./pages/test', {"email": getEmail(req)});
 })
 
-app.get('/profile', (req, res) => {
-    res.render('./pages/profile', {"email": getEmail(req)}); 
+// app.get('/profile', (req, res) => {
+//     res.render('./pages/profile', {"email": getEmail(req)}); 
+// });
+
+app.get('/profile', async (req, res) => {
+  const email = getEmail(req);
+
+  const [rows] = await db.execute('SELECT full_name, email, telephone FROM patient WHERE email = ?', [email]);
+
+  if (rows.length === 0) return res.status(404).send('Patient not found');
+
+  res.render('./pages/profile', { patient: rows[0] });
+});
+
+app.post('/update_patient', async (req, res) => {
+  const { field, value } = req.body;
+  const email = getEmail(req); // Use session/cookie for current user
+
+  const allowed = ['full_name', 'email', 'telephone'];
+  if (!allowed.includes(field)) {
+    return res.status(400).json({ error: 'Invalid field' });
+  }
+
+  try {
+    const query = `UPDATE patient SET ${field} = ? WHERE email = ?`;
+    await db.execute(query, [value, email]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error updating patient:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 app.get('/doctor', async (req, res) => {
-    const data = await Schedule.find();
-    console.log(data)
-    res.render('./pages/doctor', {"email": getEmail(req)}); 
+  try {
+    const doctorEmail = getEmail(req);
+    const today = new Date().toISOString().split('T')[0]; // e.g., "2025-05-22"
+
+    // First get the logged-in doctor's ID using their email
+    const [doctorRows] = await db.execute(
+      'SELECT id FROM doc WHERE email = ?',
+      [doctorEmail]
+    );
+
+    if (doctorRows.length === 0) {
+      return res.status(404).send('Doctor not found');
+    }
+
+    const doctorId = doctorRows[0].id;
+
+    // Now get today's appointments for this doctor
+    const [appointments] = await db.execute(`
+      SELECT booking.on_time, patient.full_name AS patient_name
+      FROM booking
+      JOIN patient ON booking.patient_id = patient.id
+      WHERE booking.doc_id = ? AND booking.on_date = ?
+      ORDER BY booking.on_time
+    `, [doctorId, today]);
+
+    res.render('./pages/doctor', {
+      email: doctorEmail,
+      appointments: appointments
+    });
+
+  } catch (err) {
+    console.error('Error loading doctor dashboard:', err);
+    res.status(500).send('Server error');
+  }
 });
+
 
 app.get('/schedule', (req, res) => {
-    res.render('./pages/schedule', {"email": getEmail(req)}); 
+    res.render('./pages/schedule', {"email": getEmail(req), submitted: false}); 
 });
 
-app.get('/doctor_profile', (req, res) => { 
-    res.render('./pages/doctor_profile', {"email": getEmail(req)}); 
+app.post('/submit_absence', async (req, res) => {
+  const { from_date, to_date } = req.body;
+  const email = getEmail(req);
+
+  try {
+    // Get doctor ID
+    const [doctorRows] = await db.execute('SELECT id FROM doc WHERE email = ?', [email]);
+    if (!doctorRows.length) return res.status(404).send('Doctor not found');
+    const doctorId = doctorRows[0].id;
+
+    // Insert into absence table
+    await db.execute(
+      'INSERT INTO absence (doc_id, from_date, to_date) VALUES (?, ?, ?)',
+      [doctorId, from_date, to_date]
+    );
+
+    res.render('./pages/schedule', { submitted: true });
+
+  } catch (err) {
+    console.error('Error submitting absence:', err);
+    res.status(500).send('Error saving absence');
+  }
 });
 
-/*
-1. npm install express-session
-2. app.use(session({[secretKey]}))
-3. after login add req.session.userId = user.id !CHANGE IT ACCORDINGLY
-4. check line 158 and add user's id from the session to create booking record in the database 
-*/
+
+app.get('/doctor_profile', async (req, res) => {
+  try {
+    const email = getEmail(req); // this gets the logged-in doctor's email
+
+    const [rows] = await db.execute('SELECT * FROM doc WHERE email = ?', [email]);
+
+    if (rows.length === 0) {
+      return res.status(404).send('Doctor not found');
+    }
+
+    const doctor = rows[0];
+
+    res.render('./pages/doctor_profile', { doctor });
+
+  } catch (err) {
+    console.error('Error loading doctor profile:', err);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.post('/update_doctor', async (req, res) => {
+  const email = getEmail(req);
+  const { field, value } = req.body;
+
+  const allowed = ['full_name', 'telephone', 'location', 'speciality', 'password'];
+  if (!allowed.includes(field)) {
+    return res.status(400).json({ error: 'Invalid field' });
+  }
+
+  const query = `UPDATE doc SET ${field} = ? WHERE email = ?`;
+  await db.execute(query, [value, email]);
+
+  res.json({ success: true });
+});
+
+app.get('/about', (req,res) => {
+    res.render('./pages/about');
+});
+
+app.get('/services', (req,res) => {
+    res.render('./pages/services');
+})

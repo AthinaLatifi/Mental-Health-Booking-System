@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Doctor's Work Schedule – MindWell</title>
+  <title>Doctor Absence Submission – MindWell</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -37,195 +37,86 @@
     }
 
     .container {
-      margin: 30px;
+      margin: 40px auto;
+      max-width: 500px;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
 
     .container h2 {
       text-align: center;
       color: #3c8dbc;
+      margin-bottom: 30px;
     }
 
-    .schedule-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .schedule-table th,
-    .schedule-table td {
-      padding: 12px;
-      text-align: center;
-      border: 1px solid #ddd;
-    }
-
-    .schedule-table th {
-      background-color: #3c8dbc;
-      color: white;
-    }
-
-    .schedule-table tr:nth-child(even) {
-      background-color: #f9fbfd;
-    }
-
-    .schedule-table td a {
-      color: #3c8dbc;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    .schedule-table td a:hover {
-      text-decoration: underline;
-    }
-
-    .update-form {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-      padding: 30px;
-      margin-top: 40px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .update-form h3 {
-      text-align: center;
-      color: #3c8dbc;
-      margin-bottom: 20px;
-    }
-
-    .update-form label {
+    label {
       display: block;
-      margin-top: 10px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       font-weight: bold;
       color: #444;
     }
 
-    .update-form select,
-    .update-form input {
-      padding: 10px;
-      margin-bottom: 10px;
+    input[type="date"] {
       width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
       border: 1px solid #cbddee;
       border-radius: 6px;
-      font-size: 14px;
     }
 
-    .update-form button {
+    button {
       background-color: #3c8dbc;
       color: white;
       padding: 12px;
-      width: 100%;
       border: none;
-      cursor: pointer;
       border-radius: 6px;
       font-size: 16px;
-      margin-top: 10px;
-      transition: background-color 0.3s;
+      width: 100%;
+      cursor: pointer;
     }
 
-    .update-form button:hover {
+    button:hover {
       background-color: #5faee3;
+    }
+
+    .success-message {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Work Schedule</h1>
+  <h1>Submit Absence</h1>
 </header>
 
 <nav>
   <a href="/doctor">Home</a>
   <a href="/doctor_profile">Profile</a>
+  <a href="/login">Logout</a>
 </nav>
 
 <div class="container">
-  <h2>Current Work Schedule</h2>
-  <table class="schedule-table">
-    <thead>
-      <tr>
-        <th>Day</th>
-        <th>Start Time</th>
-        <th>End Time</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Monday</td>
-        <td>08:00 AM</td>
-        <td>05:00 PM</td>
-        <td><a href="#update-form" onclick="populateForm('Monday', '08:00 AM', '05:00 PM')">Update</a></td>
-      </tr>
-      <tr>
-        <td>Tuesday</td>
-        <td>08:00 AM</td>
-        <td>05:00 PM</td>
-        <td><a href="#update-form" onclick="populateForm('Tuesday', '08:00 AM', '05:00 PM')">Update</a></td>
-      </tr>
-      <tr>
-        <td>Wednesday</td>
-        <td>08:00 AM</td>
-        <td>05:00 PM</td>
-        <td><a href="#update-form" onclick="populateForm('Wednesday', '08:00 AM', '05:00 PM')">Update</a></td>
-      </tr>
-      <tr>
-        <td>Thursday</td>
-        <td>08:00 AM</td>
-        <td>05:00 PM</td>
-        <td><a href="#update-form" onclick="populateForm('Thursday', '08:00 AM', '05:00 PM')">Update</a></td>
-      </tr>
-      <tr>
-        <td>Friday</td>
-        <td>08:00 AM</td>
-        <td>05:00 PM</td>
-        <td><a href="#update-form" onclick="populateForm('Friday', '08:00 AM', '05:00 PM')">Update</a></td>
-      </tr>
-    </tbody>
-  </table>
+  <h2>Mark Absence Dates</h2>
+  <form method="POST" action="/submit_absence">
+    <label for="from">From Date:</label>
+    <input type="date" id="from" name="from_date" required>
 
-  <div class="update-form" id="update-form">
-    <h3>Update Work Schedule</h3>
-    <form action="javascript:void(0);" method="POST">
-      <label for="day">Day:</label>
-      <select id="day" name="day" required>
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-      </select>
+    <label for="to">To Date:</label>
+    <input type="date" id="to" name="to_date" required>
 
-      <label for="startTime">Start Time:</label>
-      <input type="time" id="startTime" name="startTime" required>
+    <button type="submit">Submit Absence</button>
+  </form>
 
-      <label for="endTime">End Time:</label>
-      <input type="time" id="endTime" name="endTime" required>
-
-      <button type="submit" onclick="updateSchedule()">Update Schedule</button>
-    </form>
-  </div>
+  <% if (typeof submitted !== 'undefined' && submitted) { %>
+    <div class="success-message">Absence recorded successfully!</div>
+  <% } %>
 </div>
-
-<script>
-  function populateForm(day, startTime, endTime) {
-    document.getElementById('day').value = day;
-    document.getElementById('startTime').value = startTime;
-    document.getElementById('endTime').value = endTime;
-  }
-
-  function updateSchedule() {
-    const day = document.getElementById('day').value;
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-
-    alert(`Schedule updated for ${day}: ${startTime} - ${endTime}`);
-    // Add your logic here to actually handle the update.
-  }
-</script>
 
 </body>
 </html>

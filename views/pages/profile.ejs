@@ -157,16 +157,31 @@
     <div class="profile-box">
       <h3>Your Profile</h3>
 
-      <div id="name">
-        <p><label>Full Name:</label> John Doe <button onclick="editInfo('name')">Change</button></p>
+      <!-- Full Name -->
+      <div id="full_name">
+        <p>
+          <label>Full Name:</label>
+          <span class="field-value"><%= patient.full_name %></span>
+          <button onclick="editInfo('full_name')">Change</button>
+        </p>
       </div>
 
-      <div id="username">
-        <p><label>Username:</label> johndoe123 <button onclick="editInfo('username')">Change</button></p>
+      <!-- Email -->
+      <div id="email">
+        <p>
+          <label>Email:</label>
+          <span class="field-value"><%= patient.email %></span>
+          <button onclick="editInfo('email')">Change</button>
+        </p>
       </div>
 
+      <!-- Telephone -->
       <div id="telephone">
-        <p><label>Telephone:</label> +1234567890 <button onclick="editInfo('telephone')">Change</button></p>
+        <p>
+          <label>Telephone:</label>
+          <span class="field-value"><%= patient.telephone %></span>
+          <button onclick="editInfo('telephone')">Change</button>
+        </p>
       </div>
 
       <!-- Edit Form -->
@@ -186,8 +201,8 @@
 
     function editInfo(field) {
       currentField = field;
-      const value = document.querySelector(`#${field} p`).textContent.split(":")[1].trim();
-      document.getElementById('new-value').value = value;
+      const valueSpan = document.querySelector(`#${field} .field-value`);
+      document.getElementById('new-value').value = valueSpan.textContent.trim();
       document.getElementById('edit-form').style.display = 'block';
     }
 
@@ -195,19 +210,27 @@
       document.getElementById('edit-form').style.display = 'none';
     }
 
-    function confirmChange(event) {
+    async function confirmChange(event) {
       event.preventDefault();
       const newValue = document.getElementById('new-value').value;
-      const confirmation = confirm(`Are you sure you want to change your ${currentField} to ${newValue}?`);
-      if (confirmation) {
-        document.querySelector(`#${currentField} p`).textContent = `${capitalizeFirstLetter(currentField)}: ${newValue}`;
-        document.getElementById('edit-form').style.display = 'none';
-        alert(`${currentField} has been updated to: ${newValue}`);
-      }
-    }
 
-    function capitalizeFirstLetter(str) {
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      const confirmUpdate = confirm(`Are you sure you want to change your ${currentField} to "${newValue}"?`);
+      if (!confirmUpdate) return;
+
+      const res = await fetch('/update_patient', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field: currentField, value: newValue })
+      });
+
+      if (res.ok) {
+        // update the value in the UI
+        document.querySelector(`#${currentField} .field-value`).textContent = newValue;
+        document.getElementById('edit-form').style.display = 'none';
+        alert('Updated successfully!');
+      } else {
+        alert('Failed to update. Try again.');
+      }
     }
   </script>
 </body>
