@@ -15,22 +15,25 @@ app.use(bodyParser.json());
 
 const _Port =1000;
 const server = http.createServer(app);
+require('dotenv').config();
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'doctor',
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASS,
+    database: process.env.MYSQL_DB,
 });
+
 let Schedule = require('./models/schedule');
-let password = 'athinalatifi51';
-mongoose.connect('mongodb+srv://'+password+':'+password+'@cluster0.1rslh5n.mongodb.net/'+ 'doctor')
+const mongoUri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.1rslh5n.mongodb.net/${process.env.MONGO_DB}`;
+mongoose.connect(mongoUri)
+    .then(() => console.log('MongoDB connected'))
+    .catch((err) => console.error('MongoDB error:', err));
 
 const db = pool.promise();
 
 function getEmail(req){
     return req.session.email ? req.session.email : '' ;
 };
-
 
 
 server.listen(_Port, () => {
