@@ -73,6 +73,47 @@ Make sure your local MongoDB and MySQL databases are running.
 
 ---
 
+---
+
+## 🗃️ Database Setup
+
+### MongoDB (via Mongoose)
+
+The MongoDB database named `doctor` includes a `schedule` collection. This is used to store each psychologist's available days.
+
+#### 📄 Mongoose Schema: `Schedule`
+
+```js
+const mongoose = require('mongoose');
+
+var schedule = new mongoose.Schema({
+  doctor: String,
+  days: Object
+}, { collection: 'schedule' });
+
+const Schedule = mongoose.model('Schedule', schedule);
+module.exports = Schedule;
+```
+
+- `doctor`: A string (likely the doctor's username, ID, or email)
+- `days`: An object where each key represents a day of the week and maps to availability slots
+
+#### 🧾 Example Document
+
+```json
+{
+  "_id": "6650abc123...",
+  "doctor": "dr.john@example.com",
+  "days": {
+    "monday": ["10:00", "14:00"],
+    "wednesday": ["11:00", "16:00"],
+    "friday": []
+  }
+}
+```
+
+> ⚠️ Ensure your `.env` is properly configured to connect to MongoDB, and that this schema exists in your `models/schedule.js` file.
+
 ## 🧪 Usage
 
 1. Go to the home page and click **"GET STARTED"**.
